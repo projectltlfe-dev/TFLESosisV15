@@ -13,7 +13,7 @@
   --green:#22B573;--cream:#FFF7E8;--spring:cubic-bezier(.34,1.56,.64,1);--smooth:cubic-bezier(.22,1,.36,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-/* Ukuran untuk LMS: lebar 100%, tinggi tetap 650px (seukuran layar ponsel) */
+/* Ukuran untuk LMS: lebar 100%, tinggi tetap 600px (seukuran layar ponsel) */
 html,body{margin:0;overflow:hidden;background:#E61A23}
 body{font-family:'Nunito',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);
   -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;overscroll-behavior:none}
@@ -21,7 +21,7 @@ button{font-family:inherit;border:0;cursor:pointer;-webkit-tap-highlight-color:t
 textarea,input{-webkit-user-select:text;user-select:text;font-family:inherit}
 
 /* ---------- App frame ---------- */
-#app{position:relative;width:100%;height:650px;overflow:hidden;
+#app{position:relative;width:100%;height:600px;overflow:hidden;
   background:radial-gradient(120% 80% at 10% 0%,#2f78dd 0%,transparent 55%),radial-gradient(90% 70% at 100% 100%,rgba(229,50,45,.45) 0%,transparent 60%),#16428c}
 #app::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.08) 2px,transparent 2.5px);background-size:28px 28px}
 #stage{position:absolute;left:50%;top:50%;width:720px;height:1280px;overflow:hidden;background:#F8EDD6;
@@ -479,6 +479,10 @@ html,body{background:var(--yc)}
 .endCard .chipM{background:var(--yc)}
 .endLogo{height:84px;width:auto;display:block;margin:0 auto 14px}
 .endCard{top:96px;max-height:1134px}
+
+/* v3 · input minimal 16px di layar (mencegah iOS auto-zoom saat mengetik) */
+.sCard input{font-size:max(32px,var(--minFs,32px));height:max(92px,calc(var(--minFs,32px) * 2.6))}
+.q textarea{font-size:max(24px,var(--minFs,24px));height:max(118px,calc(var(--minFs,24px) * 3.6));line-height:1.3}
 </style>
 </head>
 <body>
@@ -523,7 +527,7 @@ setLogos(document);
 const stage=$('#stage'),sceneEl=$('#scene'),fxEl=$('#fx'),uiEl=$('#ui'),dragLayer=$('#dragLayer');
 let SCALE=1;
 function isTyping(){const a=document.activeElement;return !!a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA');}
-const GAME_H=650; /* tinggi tetap game dalam px */
+const GAME_H=600; /* tinggi tetap game dalam px */
 let lastAppH=0,frameTries=0;
 function sizeApp(){
   const app=$('#app');
@@ -533,7 +537,7 @@ function sizeApp(){
   growFrame(H);
 }
 /* Bila halaman ini berada di iframe yang sama origin (misal H5P Iframe Embedder),
-   samakan tinggi iframe-nya dengan tinggi game (650px). Aman bila tidak diizinkan. */
+   samakan tinggi iframe-nya dengan tinggi game (600px). Aman bila tidak diizinkan. */
 function growFrame(H){
   try{
     const fe=window.frameElement;if(!fe)return;
@@ -548,6 +552,7 @@ function fit(force){
   sizeApp();
   const box=$('#app').getBoundingClientRect(),W=box.width||innerWidth,H=box.height||innerHeight;
   const s=Math.min(W/720,H/1280);SCALE=s;
+  document.documentElement.style.setProperty('--minFs',Math.ceil(16.5/s)+'px');
   stage.style.transform=`translate(-50%,-50%) scale(${s})`;
   stage.classList.toggle('framed',(W-720*s>10)||(H-1280*s>10));
 }
@@ -970,6 +975,7 @@ function instruct(text,step){
   instrEl.animate([{opacity:0,transform:'translate(-50%,-12px) scale(.9)'},{opacity:1,transform:'translate(-50%,0) scale(1)'}],{duration:380,easing:EASE_SPRING});
 }
 function hint(fromEl,toEl,o={}){
+  if(!fromEl||!toEl||!fromEl.isConnected||!toEl.isConnected){const n=()=>{};n.done=true;return n;}
   const g=h('div','guide','',dragLayer),mid='gA'+(++UID);
   g.innerHTML=`<svg class="gsvg" viewBox="0 0 720 1280"><defs><marker id="${mid}" viewBox="0 0 10 10" refX="4" refY="5" markerWidth="30" markerHeight="30" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0L10 5L0 10z" fill="#fff"/></marker></defs><path class="gp1"/><path class="gp2" marker-end="url(#${mid})"/></svg>
     <div class="gring gA${o.fromUp?' up':''}"><span>${esc(o.from||'Tahan & seret')}</span></div>
@@ -1149,59 +1155,111 @@ function whisperBubble(key,text,x,y){
    DRAG & DROP (pointer events — mouse & touch)
    ========================================================= */
 const Drag={
-  zones:[],
-  clear(){this.zones=[];},
+  zones:[],active:null,
+  clear(){if(this.active)this.active.abort();this.zones=[];},
   addZone(el,o){const z=Object.assign({el},o);this.zones.push(z);return z;},
   hit(cx,cy,p){
     for(const z of this.zones){
       if(!z.el.isConnected)continue;if(z.accept&&!z.accept(p))continue;
       const r=z.el.getBoundingClientRect(),pad=(z.pad||16)*SCALE;
       if(cx>=r.left-pad&&cx<=r.right+pad&&cy>=r.top-pad&&cy<=r.bottom+pad)return z;
-    }return null;
+    }
+    /* Lebih pemaaf: sosis matang yang dilepas di area konsumen (atas meja kasir)
+       otomatis diberikan ke konsumen terdekat yang sedang menunggu. */
+    if(p&&p.type==='cooked'){
+      const pt=toStage(cx,cy);
+      if(pt.y<640){
+        let best=null,bd=1e9;
+        for(const z of this.zones){
+          if(!z.cust||!z.el.isConnected||(z.accept&&!z.accept(p)))continue;
+          const r=rectStage(z.el),d=Math.abs(pt.x-(r.x+r.w/2));
+          if(d<bd){bd=d;best=z;}
+        }
+        if(best)return best;
+      }
+    }
+    return null;
   },
   source(el,o){el.addEventListener('pointerdown',e=>this.down(e,el,o));},
   down(e,el,o){
     if(e.button!=null&&e.button>0)return;
+    if(this.active)this.active.finish(null,false);      /* drag lama yang "nyangkut" diselesaikan dulu */
     if(o.can&&!o.can()){o.deny&&o.deny();return;}
     e.preventDefault();e.stopPropagation();
-    const st={sx:e.clientX,sy:e.clientY,moved:false,ghost:null,p:null,hover:null,lx:0,rot:0};
-    const pos=ev=>{
-      const p=toStage(ev.clientX,ev.clientY);
-      const vx=p.x-st.lx;st.lx=p.x;st.rot=st.rot*.8+clamp(vx*1.2,-22,22)*.2;
+    const pid=e.pointerId;
+    try{if(el.setPointerCapture&&pid!=null)el.setPointerCapture(pid);}catch(_){}
+    const st={sx:e.clientX,sy:e.clientY,lx:e.clientX,ly:e.clientY,moved:false,ghost:null,p:null,hover:null,rx:0,rot:0,done:false};
+    const same=ev=>ev.pointerId==null||pid==null||ev.pointerId===pid;
+    const pos=(cx,cy)=>{
+      const p=toStage(cx,cy);
+      const vx=p.x-st.rx;st.rx=p.x;st.rot=st.rot*.8+clamp(vx*1.2,-22,22)*.2;
       st.ghost.style.left=p.x+'px';st.ghost.style.top=p.y+'px';
       st.ghost.style.transform=`translate(-50%,-50%) rotate(${st.rot.toFixed(1)}deg) scale(1.12)`;
-      const z=this.hit(ev.clientX,ev.clientY,st.p);
+      const z=this.hit(cx,cy,st.p);
       if(z!==st.hover){st.hover&&st.hover.el.classList.remove('dz-hover');z&&z.el.classList.add('dz-hover');st.hover=z;}
     };
-    const start=ev=>{
+    const start=(cx,cy)=>{
       st.p=o.payload();st.ghost=o.ghost();st.ghost.style.position='absolute';st.ghost.style.zIndex=5;
       st.ghost.style.filter='drop-shadow(0 16px 12px rgba(0,0,0,.3))';
-      dragLayer.appendChild(st.ghost);st.lx=toStage(ev.clientX,ev.clientY).x;
+      dragLayer.appendChild(st.ghost);st.rx=toStage(cx,cy).x;
       o.onPick&&o.onPick(st.p);SFX.pop();dragLayer.classList.add('dragging');
     };
     const move=ev=>{
-      if(!st.moved){if(Math.hypot(ev.clientX-st.sx,ev.clientY-st.sy)<8*SCALE)return;st.moved=true;start(ev);}
-      pos(ev);
+      if(st.done||!same(ev))return;
+      if(ev.pointerType==='mouse'&&ev.buttons===0){finish({x:st.lx,y:st.ly},!st.moved);return;}
+      st.lx=ev.clientX;st.ly=ev.clientY;
+      if(!st.moved){if(Math.hypot(ev.clientX-st.sx,ev.clientY-st.sy)<8*SCALE)return;st.moved=true;start(ev.clientX,ev.clientY);}
+      pos(ev.clientX,ev.clientY);
     };
-    const up=ev=>{
-      removeEventListener('pointermove',move);removeEventListener('pointerup',up);removeEventListener('pointercancel',up);
-      if(!st.moved){o.onTap&&o.onTap();return;}
+    const L=[];
+    const on=(t,ev,f)=>{t.addEventListener(ev,f,{passive:false});L.push([t,ev,f]);};
+    const off=()=>{L.forEach(([t,ev,f])=>t.removeEventListener(ev,f));L.length=0;clearTimeout(st.wd);};
+    /* finish(): dipanggil sekali saja, dari pointerup / pointercancel / fallback */
+    const finish=(cx,allowTap)=>{
+      if(st.done)return;st.done=true;off();if(Drag.active===ctl)Drag.active=null;
+      try{if(el.releasePointerCapture&&pid!=null)el.releasePointerCapture(pid);}catch(_){}
+      if(!st.moved){if(allowTap!==false&&cx!=null)o.onTap&&o.onTap();return;}
       dragLayer.classList.remove('dragging');
       st.hover&&st.hover.el.classList.remove('dz-hover');
-      const z=ev.type==='pointercancel'?null:this.hit(ev.clientX,ev.clientY,st.p);
-      const g=st.ghost;
-      if(z&&z.drop(st.p)!==false){
+      const X=cx!=null?cx.x:st.lx,Y=cx!=null?cx.y:st.ly;
+      const g=st.ghost;let ok=false;
+      try{const z=this.hit(X,Y,st.p);ok=!!(z&&z.drop(st.p)!==false);}catch(err){console.error(err);ok=false;}
+      if(ok){
         g.animate([{opacity:1},{opacity:0,transform:`translate(-50%,-50%) scale(.2)`}],{duration:240,easing:'ease-in',fill:'forwards'}).onfinish=()=>g.remove();
+        setTimeout(()=>g.remove(),600);
       }else{
         o.onCancel&&o.onCancel(st.p);
         const r=el.isConnected?rectStage(el):null;
         if(r)g.animate([{left:g.style.left,top:g.style.top},{left:(r.x+r.w/2)+'px',top:(r.y+r.h/2)+'px',transform:'translate(-50%,-50%) scale(1)'}],{duration:340,easing:EASE_SMOOTH,fill:'forwards'}).onfinish=()=>g.remove();
-        else g.remove();
+        setTimeout(()=>g.remove(),700);
       }
     };
-    addEventListener('pointermove',move);addEventListener('pointerup',up);addEventListener('pointercancel',up);
+    const up=ev=>{if(!same(ev))return;finish({x:ev.clientX,y:ev.clientY},true);};
+    /* pointercancel (mis. WebView mengambil alih gestur) = lepas di posisi terakhir */
+    const cancel=ev=>{if(!same(ev))return;finish({x:st.lx,y:st.ly},false);};
+    /* Cadangan untuk browser/WebView yang tidak mengirim pointerup (mis. jari/mouse lepas di luar iframe) */
+    const late=()=>setTimeout(()=>{if(!st.done)finish({x:st.lx,y:st.ly},false);},120);
+    on(window,'pointermove',move);on(window,'pointerup',up);on(window,'pointercancel',cancel);
+    on(el,'pointerup',up);on(el,'pointercancel',cancel);
+    on(window,'touchend',late);on(window,'touchcancel',late);on(window,'mouseup',late);on(window,'blur',late);
+    on(document,'visibilitychange',late);
+    const ctl={finish:(cx,allowTap)=>finish(cx==null?{x:st.lx,y:st.ly}:cx,allowTap),
+      abort:()=>{if(st.done)return;st.done=true;off();if(Drag.active===ctl)Drag.active=null;dragLayer.classList.remove('dragging');
+        if(st.moved){st.hover&&st.hover.el.classList.remove('dz-hover');st.ghost&&st.ghost.remove();o.onCancel&&o.onCancel(st.p);}}};
+    Drag.active=ctl;
   }
 };
+
+/* Tunggu sampai kondisi terpenuhi (cek berkala) — pengaman agar alur tidak pernah macet */
+function until(cond,ms=250){return new Promise(r=>{const t=()=>{let v=false;try{v=cond();}catch(e){}if(v)r();else setTimeout(t,ms);};t();});}
+/* Pastikan selalu ada sosis matang di panggangan selama konsumen masih butuh */
+function keepStock(grill,needFn){
+  let alive=true;
+  (async()=>{while(alive){await sleep(600);if(!alive)break;
+    try{if(needFn()&&!grill.firstCooked()&&!dragLayer.classList.contains('dragging')){const i=grill.slots.indexOf(null);if(i>=0)grill.add(i,99999);}}catch(e){}
+  }})();
+  return()=>{alive=false;};
+}
 
 /* =========================================================
    GRILL & SOSIS
@@ -1307,7 +1365,7 @@ class Cust{
     this.order.querySelector('.ring').style.cssText='position:absolute;left:0;top:0;width:52px;height:52px;transform:rotate(-90deg)';
     this.order.style.display='none';
     this.setCount();
-    Drag.addZone(this.el,{pad:6,accept:p=>p.type==='cooked'&&this.need(),drop:p=>{p.grill.take(p.s);this.serve();return true;}});
+    Drag.addZone(this.el,{pad:24,cust:true,accept:p=>p.type==='cooked'&&this.need(),drop:p=>{p.grill.take(p.s);this.serve();return true;}});
   }
   need(){return!this.leaving&&this.arrived&&this.got<this.want;}
   setCount(){this.order.querySelector('b').textContent=this.o.countText?this.o.countText(this):'×'+Math.max(0,this.want-this.got);}
@@ -1619,17 +1677,21 @@ async function pathAccept(){
     setView('counter');vig(null);
     grill=new Grill({hold:true});
     for(let i=0;i<6;i++)grill.add(i,99999,true);
-    grill.frozen=false;grill.updSizzle();
+    grill.frozen=true;grill.updSizzle();
     J=new Cust(LOOKS.jule,'cMid',{key:'jule',want:6,ex:'sweatSmile',pose:'bag',icon:ICON.bag,countText:cu=>`${cu.got}/6`,
       onServe:cu=>{const rem=S.goal-S.target,left=cu.want-cu.got+1;addTarget(Math.max(1,Math.ceil(rem/left)),cu.el);}});
   });
   await J.walkIn(-1);
   await say('jule','Makasih banyak ya, {name}! Masukin ke kantong saya aja semuanya.',{ex:'happy'});
+  grill.frozen=false;grill.updSizzle();
   instruct('Seret semua sosis ke kantong Bu Jule','6×');
-  let stop=hint(grill.slots[0].el,J.el,{to:'Masukkan ke kantong',item:'cooked',toY:270});
+  let stop=hint(grill.firstCooked()&&grill.firstCooked().el,J.el,{to:'Masukkan ke kantong',item:'cooked',toY:270});
   grill.onTapCooked=s=>{if(J.need()){grill.take(s);J.serve();}};
   const origServe=J.serve.bind(J);J.serve=()=>{stop&&stop();stop=null;origServe();};
-  await J.done();
+  const stockJ=keepStock(grill,()=>J.need());
+  await Promise.race([J.done(),until(()=>J.got>=J.want)]);
+  stockJ();stop&&stop();stop=null;
+  if(S.target<S.goal)S.target=S.goal;
   instruct(null);grill.frozen=true;grill.updSizzle();
   await sleep(700);
   SFX.success();confetti(50);
@@ -1691,9 +1753,9 @@ async function pathRefuse(){
 function brakeForm(){
   return new Promise(res=>{
     const Q=[
-      ['Apa yang sebenarnya terjadi?','Fakta apa yang kamu lihat di toko hari ini?'],
-      ['Apa yang harus dikejar (dan dijaga)?','Apa yang tetap harus dicapai? Apa yang nggak boleh dikorbankan?'],
-      ['Langkah apa yang harus dilakukan?','Ide apa yang masuk akal, tanpa langgar SOP & tanpa korbankan tim?']
+      ['Apa yang sebenarnya terjadi?','Fakta apa yang terjadi di toko?'],
+      ['Apa yang harus dikejar (dan dijaga)?','Apa yang dikejar & dijaga?'],
+      ['Langkah apa yang harus dilakukan?','Ide apa yang bisa dicoba?']
     ];
     const p=panel(`<div class="fTop"><div class="stopSign">REM</div><div><h2>Rem Dulu, ${esc(S.name)}!</h2><p>Sebelum ambil keputusan, cek 3 hal ini. Tulis singkat pakai bahasamu sendiri.</p></div></div>
       <div class="facts"><span>Yang kamu tahu sejauh ini:</span><i>📅 Sekolah libur</i><i>🛒 Toko lebih sepi</i><i>🗣️ Tim sudah menawarkan</i><i>⏰ Sudah mau sore</i></div>
@@ -1765,17 +1827,19 @@ async function scene7(){
     setView('counter');AudioSys.setMood('happy');
     grill=new Grill({hold:true});
     for(let i=0;i<4;i++)grill.add(i,99999,true);
-    grill.updSizzle();
+    grill.frozen=true;grill.updSizzle();
     I=new Cust(LOOKS.ibu,'cMid',{key:'ibu',want:1,ex:'smile'});
     A=new Cust(LOOKS.anak,'kid',{key:'anak',want:0,ex:'smile'});
     A.el.style.zIndex=2;A.order.style.top='-46px';A.order.style.right='-30px';
   });
   await Promise.all([I.walkIn(-1),sleep(250).then(()=>A.walkIn(-1))]);
   await say('ibu','Kak, sosis bakar **Yummy Choice**-nya satu, ya.');
+  grill.frozen=false;grill.updSizzle();
   instruct('Seret sosis matang ke Ibu','1');
-  let stop=hint(grill.firstCooked().el,I.el,{to:'Kasih ke Ibu',item:'cooked',toY:270});
+  let stop=hint(grill.firstCooked()&&grill.firstCooked().el,I.el,{to:'Kasih ke Ibu',item:'cooked',toY:270});
   grill.onTapCooked=s=>{const t=I.need()?I:A.need()?A:null;if(t){grill.take(s);t.serve();}};
-  await I.done();stop();instruct(null);
+  let stockI=keepStock(grill,()=>I.need());
+  await Promise.race([I.done(),until(()=>I.got>=I.want)]);stockI();stop();instruct(null);grill.frozen=true;grill.updSizzle();
   I.c.pose('hold');
   await say('ibu','Makasih, Kak.',{ex:'happy'});
   A.c.ex('spark');A.c.pose('reach');A.c.hop();
@@ -1800,10 +1864,12 @@ async function scene7(){
   await say('anak','Mamaaa, aku mau! **Aku mau sosis!**',{ex:'spark',pose:'reach'});
   await say('ibu','Hahaha, ya udah deh. Tambah **dua**, ya. Satu buat kakaknya di rumah.',{ex:'happy'});
   A.want=2;A.showOrder();
+  grill.frozen=false;grill.updSizzle();
   instruct('Seret 2 sosis ke si Adik','2×');
-  stop=hint(grill.firstCooked().el,A.el,{to:'Kasih ke Adik',item:'cooked',toY:165});
+  stop=hint(grill.firstCooked()&&grill.firstCooked().el,A.el,{to:'Kasih ke Adik',item:'cooked',toY:165});
   const sv=A.serve.bind(A);A.serve=()=>{stop&&stop();stop=null;sv();};
-  await A.done();instruct(null);
+  const stockA=keepStock(grill,()=>A.need());
+  await Promise.race([A.done(),until(()=>A.got>=A.want)]);stockA();stop&&stop();stop=null;instruct(null);
   A.c.pose('hold');A.c.ex('happy');
   SFX.cash();confetti(30);
   await say('anak','Yeay! Makasih, Kak!');
@@ -1864,16 +1930,15 @@ async function scene9(){
    MAIN FLOW
    ========================================================= */
 async function main(){
-  await startScreen();
-  await scene1();
-  await scene2();
-  await scene3();
-  await decision();
-  await scene5();
-  await scene6();
-  await scene7();
-  await scene8();
-  await scene9();
+  const steps=[startScreen,scene1,scene2,scene3,decision,scene5,scene6,scene7,scene8,scene9];
+  for(const fn of steps){
+    try{await fn();}
+    catch(e){
+      console.error('[game] error di',fn.name,e);
+      /* bersihkan sisa UI supaya langkah berikutnya tetap jalan */
+      try{TAP=null;instruct(null);uiEl.querySelectorAll('.bubble,.whisper,.toast,.caption,.choiceWrap,.backdrop,.panel,.stamp').forEach(x=>x.remove());dragLayer.classList.remove('dragging');}catch(_){}
+    }
+  }
 }
 main().catch(e=>console.error(e));
 })();
