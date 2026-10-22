@@ -102,7 +102,7 @@ textarea,input{-webkit-user-select:text;user-select:text;font-family:inherit}
 @keyframes gloom{to{opacity:.3}}
 .chr .prop{display:none}
 .p-phone .prop-phone,.p-wallet .prop-wallet,.p-bag .prop-bag,.p-hold .prop-sos{display:inline}
-.p-phone .armL{transform:rotate(-70deg)}
+.p-phone .armL{transform:rotate(-48deg)}
 .p-wallet .armL{transform:rotate(-80deg)}.p-wallet .armR{transform:rotate(55deg)}
 .p-bag .armL{transform:rotate(-55deg)}.p-bag .armR{transform:rotate(55deg)}
 .p-hold .armL{transform:rotate(-55deg)}
@@ -122,6 +122,7 @@ textarea,input{-webkit-user-select:text;user-select:text;font-family:inherit}
 .p-reach .armR{transform:rotate(-160deg);animation:flR2 .45s ease-in-out .5s infinite alternate}
 @keyframes flL2{from{transform:rotate(150deg)}to{transform:rotate(170deg)}}
 @keyframes flR2{from{transform:rotate(-150deg)}to{transform:rotate(-170deg)}}
+.p-cross .armL{transform:rotate(-64deg)}.p-cross .armR{transform:rotate(64deg)}
 .p-hips .armL{transform:rotate(28deg)}.p-hips .armR{transform:rotate(-28deg)}
 .chr.frozen svg{filter:saturate(.25) brightness(.8)}
 .chr.dz-hover svg{filter:drop-shadow(0 0 8px #FFE07A) drop-shadow(0 0 20px #FFC928)}
@@ -460,7 +461,7 @@ html,body{background:var(--yc)}
 .gring.gB span{background:var(--yc)}
 .gitem{position:absolute;left:0;top:0;width:150px;height:32px;margin:-16px 0 0 -75px;border-radius:18px;opacity:0;
   background:linear-gradient(180deg,#ffd6cf,#F4A096 55%,#d97b70);box-shadow:0 10px 14px rgba(0,0,0,.25)}
-.gitem.cooked{background:repeating-linear-gradient(75deg,transparent 0 14px,rgba(70,22,6,.7) 14px 18px),linear-gradient(180deg,#e7955f,#C9652F 55%,#8f3f18)}
+.gitem.cooked{background:linear-gradient(180deg,#e7955f,#C9652F 55%,#8f3f18)}
 .ghand{position:absolute;left:0;top:0;width:100px;height:100px;margin:-4px 0 0 -45px;opacity:0;filter:drop-shadow(0 8px 6px rgba(0,0,0,.3))}
 .ghand svg{width:100%;height:100%;display:block}
 /* coin pop */
@@ -483,6 +484,45 @@ html,body{background:var(--yc)}
 /* v3 · input minimal 16px di layar (mencegah iOS auto-zoom saat mengetik) */
 .sCard input{font-size:max(32px,var(--minFs,32px));height:max(92px,calc(var(--minFs,32px) * 2.6))}
 .q textarea{font-size:max(24px,var(--minFs,24px));height:max(118px,calc(var(--minFs,24px) * 3.6));line-height:1.3}
+
+/* v7 · 3 pertanyaan: seret kartu jawaban */
+.form.dnd{top:120px;max-height:1110px;padding:30px 28px 28px}
+.form.dnd .fTop{margin-bottom:10px}
+.form.dnd .stopSign{width:84px;height:84px;font-size:26px}
+.form.dnd .facts{margin:4px 0 14px;padding:10px 12px;gap:8px}
+.form.dnd .facts i{font-size:19px}
+.slots{display:grid;gap:10px;margin-bottom:14px}
+.slotQ{display:flex;align-items:center;gap:12px;font:700 25px/1.2 var(--fd);color:var(--ink);margin-bottom:6px}
+.slotQ b{flex:none;width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font:700 22px var(--fd);transition:background .3s}
+.sq.ok .slotQ b{background:var(--green)}
+.slot{min-height:78px;border:4px dashed #cfd6e2;border-radius:20px;background:#F7F9FC;display:flex;align-items:center;justify-content:center;padding:4px;transition:border-color .2s,background .2s}
+.slot:empty::before{content:'Seret jawaban ke sini';font:800 20px var(--fn);color:#a9b0bf}
+.slot.dz-hover{border-color:var(--yc);background:#FFF0F0}
+.slot.ok{border-style:solid;border-color:var(--green);background:#EAFBF4}
+.slot.bad{border-style:solid;border-color:var(--red);background:#FFF0EF}
+.why{font:800 18px/1.3 var(--fn);color:var(--red);min-height:0;margin-top:4px}
+.why:empty{display:none}
+.pool{display:grid;grid-template-columns:1fr;gap:10px;min-height:84px;padding:12px;border-radius:22px;background:#FFF8E1;transition:background .2s}
+.pool.dz-hover{background:#FFEFC2}
+.dcard{display:flex;align-items:center;gap:10px;background:#fff;border-radius:16px;padding:12px 14px;font:800 23px/1.25 var(--fn);color:var(--ink);
+  box-shadow:0 5px 0 #dfe3ea,0 8px 16px rgba(0,0,0,.06);touch-action:none;cursor:grab;-webkit-user-select:none;user-select:none}
+.dcard i{flex:none;font-style:normal;color:#b9c0cc;font-size:22px;line-height:1}
+.slot .dcard{width:100%;box-shadow:none;background:transparent;padding:6px 10px}
+.slot.ok .dcard{color:#13774f}
+.slot .dcard.lock i{display:none}
+.dcard.lifted{opacity:.3}
+.dcard.ghostCard{position:absolute;width:320px;pointer-events:none;box-shadow:0 18px 30px rgba(0,0,0,.28);border:3px solid var(--yc)}
+
+/* v8 · tombol keputusan: Terima menyala putih (menggoda), Tolak menyala merah tua (terlihat berisiko) */
+.choice.glowW{border:4px solid #fff;box-shadow:0 0 0 3px rgba(255,255,255,.95),0 0 26px 10px rgba(255,255,255,.75),0 0 60px 20px rgba(255,255,255,.35);animation:glowW 1.6s ease-in-out infinite}
+.choice.glowR{border:4px solid #8B0A0A;box-shadow:0 0 0 3px rgba(120,6,6,.95),0 0 26px 10px rgba(150,10,10,.75),0 0 60px 18px rgba(110,0,0,.45);animation:glowR 1.6s ease-in-out infinite}
+@keyframes glowW{0%,100%{box-shadow:0 0 0 3px rgba(255,255,255,.95),0 0 22px 8px rgba(255,255,255,.65),0 0 50px 16px rgba(255,255,255,.3)}50%{box-shadow:0 0 0 4px #fff,0 0 34px 14px rgba(255,255,255,.95),0 0 76px 26px rgba(255,255,255,.5)}}
+@keyframes glowR{0%,100%{box-shadow:0 0 0 3px rgba(120,6,6,.9),0 0 22px 8px rgba(150,10,10,.6),0 0 50px 14px rgba(110,0,0,.35)}50%{box-shadow:0 0 0 4px #9C0C0C,0 0 34px 14px rgba(170,12,12,.85),0 0 76px 24px rgba(120,0,0,.55)}}
+.intense .choice.glowW{animation:hbeat 1.3s ease-in-out infinite,glowW 1.6s ease-in-out infinite}
+.intense .choice.glowR{animation:hbeat 1.3s ease-in-out infinite,glowR 1.6s ease-in-out infinite}
+.choice.glowR .cL{background:#FBE3E3;color:#8B0A0A}
+.choice.glowW:active,.choice.glowR:active{transform:translateY(4px)}
+.pool:empty{display:none}
 </style>
 </head>
 <body>
@@ -667,12 +707,12 @@ $('#bgmBtn').addEventListener('click',e=>{e.stopPropagation();const on=AudioSys.
    ICONS
    ========================================================= */
 const ICON={
-  sosis:`<svg viewBox="0 0 40 40"><rect x="18.5" y="22" width="3" height="16" rx="1.5" fill="#D9B48A"/><rect x="11" y="3" width="18" height="26" rx="9" fill="#C9652F"/><path d="M13 10L27 7M13 16L27 13M13 22L27 19" stroke="#7a3412" stroke-width="2" stroke-linecap="round" opacity=".55"/><rect x="14" y="6" width="4" height="17" rx="2" fill="#fff" opacity=".35"/></svg>`,
-  sosisW:`<svg viewBox="0 0 40 40"><rect x="18.5" y="22" width="3" height="16" rx="1.5" fill="#fff" opacity=".8"/><rect x="11" y="3" width="18" height="26" rx="9" fill="#fff"/><path d="M13 10L27 7M13 16L27 13M13 22L27 19" stroke="#E5322D" stroke-width="2" stroke-linecap="round" opacity=".5"/></svg>`,
+  sosis:`<svg viewBox="0 0 40 40"><rect x="18.5" y="22" width="3" height="16" rx="1.5" fill="#D9B48A"/><rect x="11" y="3" width="18" height="26" rx="9" fill="#C9652F"/><rect x="14" y="6" width="4" height="17" rx="2" fill="#fff" opacity=".35"/></svg>`,
+  sosisW:`<svg viewBox="0 0 40 40"><rect x="18.5" y="22" width="3" height="16" rx="1.5" fill="#fff" opacity=".8"/><rect x="11" y="3" width="18" height="26" rx="9" fill="#fff"/></svg>`,
   bag:`<svg viewBox="0 0 40 40"><path d="M8 14h24l-2 23H10z" fill="#D9B07C"/><rect x="13" y="4" width="5" height="14" rx="2.5" fill="#C9652F"/><rect x="20" y="2" width="5" height="16" rx="2.5" fill="#B8572A"/><rect x="26" y="6" width="4" height="12" rx="2" fill="#C9652F"/><path d="M8 14h24" stroke="#b8905e" stroke-width="3"/></svg>`,
   hand:`<svg viewBox="0 0 64 64"><path d="M24 31V9a5 5 0 0 1 10 0v16l3-.4a5 5 0 0 1 5 3l.4 1 2.2-.3a5 5 0 0 1 5.4 4l.2 1.3 1.3-.1a5 5 0 0 1 5.3 5V47c0 8.3-6.7 15-15 15h-5c-5 0-9.4-2.4-12.2-6.4L14 45a5 5 0 0 1 7.5-6.5z" fill="#fff" stroke="#2B2D42" stroke-width="3" stroke-linejoin="round"/></svg>`,
   raw:`<svg viewBox="0 0 84 60"><rect x="6" y="38" width="72" height="14" rx="5" fill="#cfd6dd"/><rect x="10" y="20" width="64" height="20" rx="10" fill="#F4A096"/><path d="M42 6v8m0 0l-5-5m5 5l5-5" stroke="#E5322D" stroke-width="4" stroke-linecap="round" fill="none"/></svg>`,
-  cooked:`<svg viewBox="0 0 84 60"><rect x="8" y="22" width="64" height="20" rx="10" fill="#C9652F"/><path d="M18 22l6 20M30 22l6 20M42 22l6 20M54 22l6 20" stroke="#6b2a0d" stroke-width="3" opacity=".5"/><circle cx="70" cy="18" r="13" fill="#22B573"/><path d="M64 18l4 4 8-8" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`,
+  cooked:`<svg viewBox="0 0 84 60"><rect x="8" y="22" width="64" height="20" rx="10" fill="#C9652F"/><circle cx="70" cy="18" r="13" fill="#22B573"/><path d="M64 18l4 4 8-8" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`,
   face:`<svg viewBox="0 0 84 60"><circle cx="42" cy="32" r="24" fill="#F9D3B4"/><path d="M18 30Q18 6 42 6Q66 6 66 30Q60 16 42 16Q24 16 18 30Z" fill="#2b2220"/><circle cx="34" cy="33" r="3" fill="#2a2630"/><circle cx="50" cy="33" r="3" fill="#2a2630"/><path d="M35 42Q42 48 49 42" stroke="#2a2630" stroke-width="3" fill="none" stroke-linecap="round"/><g transform="translate(66 4)"><rect width="16" height="22" rx="8" fill="#C9652F"/></g></svg>`,
   bulb:`<svg viewBox="0 0 110 130"><path d="M55 8C33 8 18 25 18 45c0 14 8 23 15 30 4 4 6 9 6 14v6h32v-6c0-5 2-10 6-14 7-7 15-16 15-30C92 25 77 8 55 8z" fill="#FFE066" stroke="#2B2D42" stroke-width="5"/><rect x="38" y="100" width="34" height="9" rx="4" fill="#9aa4b1" stroke="#2B2D42" stroke-width="4"/><rect x="41" y="111" width="28" height="9" rx="4" fill="#9aa4b1" stroke="#2B2D42" stroke-width="4"/><path d="M42 74l7-18 6 12 6-12 7 18" stroke="#E5322D" stroke-width="4" fill="none" stroke-linejoin="round"/><path d="M34 32q6-12 20-14" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".8"/></svg>`
 };
@@ -688,11 +728,11 @@ const FICON={
    ========================================================= */
 let UID=0;
 const LOOKS={
-  jule:{skin:'#F6CBA8',hair:'jule',hc:'#2a1e1c',shirt:'uni',lanyard:1},
+  jule:{skin:'#F6CBA8',hair:'jule',hc:'#4a2c22',shirt:'uni'},
   nura:{skin:'#F9D5B7',hair:'long',hc:'#2b201d',shirt:'uni'},
   ken:{skin:'#EFC39E',hair:'spiky',hc:'#1d1c22',shirt:'uni',glasses:1},
-  andi:{skin:'#E7B78F',hair:'neat',hc:'#4a4a50',shirt:'#24365E',tie:'#D23A3A',mus:1,pants:'#2b2f3a',sleeve:'long'},
-  ibu:{skin:'#F5D0AE',hair:'hijab',hc:'#76C3A4',shirt:'#F08CA0',sleeve:'long'},
+  andi:{skin:'#E2AE86',hair:'neat',hc:'#3a3a40',shirt:'as',mus:1,pants:'#232a3a'},
+  ibu:{skin:'#F5D0AE',hair:'bob',hc:'#3b2a22',shirt:'#F08CA0',sleeve:'long'},
   anak:{skin:'#FAD9BD',hair:'pig',hc:'#2b201d',shirt:'#FFB547',pants:'#5b8bd6'}
 };
 const CUST_SHIRTS=['#F28FA0','#7FC8A9','#F6B352','#8E9CF0','#E07A5F','#81B29A','#B388EB','#5BC0EB','#FF8C69'];
@@ -743,11 +783,11 @@ function featSVG(ex,L){
   return s;
 }
 function charSVG(L,ex='smile',vb='0 0 200 300'){
-  const id='c'+(++UID),sk=L.skin,uni=L.shirt==='uni',sh=uni?'#2463C8':L.shirt,shD=shade(sh.startsWith('#')?sh:'#2463C8',-.22),hc=L.hc,pants=L.pants||'#4a4e5c';
+  const id='c'+(++UID),sk=L.skin,uni=L.shirt==='uni',as=L.shirt==='as',sh=uni?'#2463C8':as?'#1F3C82':L.shirt,shD=shade(sh.startsWith('#')?sh:'#2463C8',-.22),hc=L.hc,pants=L.pants||'#4a4e5c';
   let back='',front='',ears=true,frx=62,fry=58,fcy=94;
   switch(L.hair){
     case'long':back=`<path d="M38 98Q32 26 100 24Q168 26 162 98L168 206Q134 218 100 214Q66 218 32 206Z" fill="${hc}"/>`;front=`<path d="M37 104Q33 30 100 27Q167 30 163 104Q156 66 106 50L100 42L94 50Q44 66 37 104Z" fill="${hc}"/>`;break;
-    case'jule':back=`<circle cx="150" cy="40" r="23" fill="${hc}"/><path d="M38 102Q34 30 100 28Q166 30 162 102Z" fill="${hc}"/>`;front=`<path d="M37 104Q32 28 104 27Q168 30 163 96Q154 58 122 50Q86 50 62 78Q48 92 37 104Z" fill="${hc}"/><rect x="127" y="42" width="18" height="8" rx="3" fill="#FFC928" transform="rotate(20 136 46)"/>`;break;
+    case'jule':back=`<path d="M33 104Q27 24 100 22Q173 24 167 104L166 128Q160 142 146 134L142 118L58 118L54 134Q40 142 34 128Z" fill="${hc}"/>`;front=`<path d="M37 106Q30 26 106 25Q170 28 164 100Q160 70 138 56Q116 72 84 70Q60 72 50 86Q42 96 37 106Z" fill="${hc}"/><path d="M138 56Q150 70 158 94" stroke="${shade(hc,.18)}" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="132" y="52" width="20" height="8" rx="3" fill="#FFC928" transform="rotate(32 142 56)"/>`;break;
     case'spiky':front=`<path d="M38 96Q34 40 66 32L70 16L86 27L97 10L110 26L127 14L131 32Q166 42 162 96Q156 62 132 58Q104 68 72 56Q48 66 38 96Z" fill="${hc}"/>`;break;
     case'neat':front=`<path d="M39 92Q38 32 100 30Q162 32 161 92Q154 58 120 54Q112 50 104 54L84 56Q50 60 39 92Z" fill="${hc}"/><path d="M104 36Q108 46 104 54" stroke="${shade('#4a4a50',.3)}" stroke-width="3" fill="none"/>`;break;
     case'short':front=`<path d="M40 88Q38 30 100 30Q162 30 160 88Q150 56 126 54Q116 64 96 60Q62 56 40 88Z" fill="${hc}"/>`;break;
@@ -760,19 +800,31 @@ function charSVG(L,ex='smile',vb='0 0 200 300'){
   const torso='M64 166Q64 148 84 146L116 146Q136 148 136 166L141 238Q100 250 59 238Z';
   let det='';
   if(uni)det+=`<clipPath id="${id}t"><path d="${torso}"/></clipPath><g clip-path="url(#${id}t)"><rect x="116" y="140" width="11" height="120" fill="#E5322D"/><rect x="127" y="140" width="8" height="120" fill="#FFC928"/></g><path d="M84 146L100 165L116 146Z" fill="${shD}"/><rect x="69" y="176" width="22" height="8" rx="2.5" fill="#fff"/>`;
+  else if(as){
+    const dk='#16306A',lt='#2D4F9E';
+    det+=`<path d="M100 160L100 242" stroke="${dk}" stroke-width="2.5"/>`
+      +`<circle cx="100" cy="182" r="2.2" fill="#C9D3EA"/><circle cx="100" cy="202" r="2.2" fill="#C9D3EA"/><circle cx="100" cy="222" r="2.2" fill="#C9D3EA"/>`
+      +`<rect x="69" y="180" width="23" height="22" rx="3" fill="${dk}" opacity=".55"/><path d="M68 177h25v8l-12.5 4l-12.5-4z" fill="${lt}"/><circle cx="80.5" cy="185" r="1.6" fill="#C9D3EA"/>`
+      +`<rect x="108" y="180" width="23" height="22" rx="3" fill="${dk}" opacity=".55"/><path d="M107 177h25v8l-12.5 4l-12.5-4z" fill="${lt}"/><circle cx="119.5" cy="185" r="1.6" fill="#C9D3EA"/>`
+      +`<rect x="106" y="163" width="27" height="11" rx="2" fill="#fff"/><rect x="107.5" y="164.5" width="24" height="2.8" fill="#E5322D"/><rect x="107.5" y="167.3" width="24" height="2.6" fill="#FFC928"/><rect x="107.5" y="169.9" width="24" height="2.6" fill="#2463C8"/>`
+      +`<rect x="73" y="204" width="15" height="7" rx="1.5" fill="#E8ECF4"/>`
+      +`<path d="M84 145L100 161L90 171L78 151Z" fill="${lt}"/><path d="M116 145L100 161L110 171L122 151Z" fill="${lt}"/>`;
+  }
   else det+=`<path d="M86 147Q100 162 114 147Z" fill="${shade(sh,.2)}"/>`;
   if(L.tie)det+=`<path d="M84 146L100 162L116 146Z" fill="#fff"/><path d="M96 158L104 158L108 198L100 207L92 198Z" fill="${L.tie}"/><rect x="66" y="176" width="20" height="6" rx="2" fill="#FFC928"/>`;
   if(L.lanyard)det+=`<path d="M86 148L95 194M114 148L105 194" stroke="#E5322D" stroke-width="4" fill="none"/><rect x="89" y="192" width="22" height="26" rx="3" fill="#fff"/><rect x="89" y="192" width="22" height="8" rx="2" fill="#FFC928"/>`;
-  const sleeveShort=uni||L.sleeve==='short';
+  const sleeveShort=uni||as||L.sleeve==='short';
   const arm=side=>{
     const x=side==='L'?58:142;
     let props='';
     if(side==='L')props=`<g class="prop prop-phone" transform="rotate(70 58 214)"><rect x="46" y="182" width="25" height="42" rx="5" fill="#2b2d42"/><rect x="49" y="187" width="19" height="30" rx="2" fill="#bfe3ff"/><path d="M51 210l4-5 4 3 6-9" stroke="#E5322D" stroke-width="2.4" fill="none"/></g>
       <g class="prop prop-wallet" transform="rotate(80 58 214)"><rect x="42" y="194" width="24" height="13" rx="2" fill="#3fae6a" transform="rotate(-14 54 200)"/><rect x="38" y="204" width="40" height="26" rx="5" fill="#7a4a24"/><rect x="38" y="211" width="40" height="5" fill="#5e3818"/></g>
       <g class="prop prop-bag" transform="rotate(55 58 214)"><rect x="44" y="204" width="8" height="26" rx="4" fill="#C9652F"/><rect x="54" y="200" width="8" height="30" rx="4" fill="#B8572A"/><rect x="64" y="206" width="8" height="24" rx="4" fill="#C9652F"/><path d="M36 222h46l-4 50H40z" fill="#D9B07C"/><path d="M36 222h46" stroke="#b8905e" stroke-width="4"/></g>
-      <g class="prop prop-sos" transform="rotate(55 58 214)"><rect x="56" y="196" width="4" height="22" rx="2" fill="#D9B48A"/><rect x="50" y="168" width="16" height="32" rx="8" fill="#C9652F"/><path d="M52 176l12-3M52 184l12-3M52 192l12-3" stroke="#7a3412" stroke-width="2" opacity=".5"/></g>`;
-    const sleeve=sleeveShort?`<rect x="${x-10}" y="148" width="20" height="34" rx="10" fill="${sh}"/><rect x="${x-8}" y="172" width="16" height="40" rx="8" fill="${sk}"/>`:`<rect x="${x-10}" y="148" width="20" height="62" rx="10" fill="${sh}"/>`;
-    return`<g class="arm arm${side}" style="transform-origin:${x}px 158px">${sleeve}${props}<circle cx="${x}" cy="214" r="10" fill="${sk}"/></g>`;
+      <g class="prop prop-sos" transform="rotate(55 58 214)"><rect x="56" y="196" width="4" height="22" rx="2" fill="#D9B48A"/><rect x="50" y="168" width="16" height="32" rx="8" fill="#C9652F"/></g>`;
+    const skl=shade(sk,-.22);
+    const epa=as?`<rect x="${x-9}" y="150" width="18" height="6" rx="2" fill="#16306A"/><rect x="${x-10}" y="175" width="20" height="5" fill="#16306A"/>`:'';
+    const sleeve=sleeveShort?`<rect x="${x-8}" y="170" width="16" height="42" rx="8" fill="${sk}" stroke="${skl}" stroke-width="1.6"/><rect x="${x-10}" y="148" width="20" height="34" rx="10" fill="${sh}"/>${epa}`:`<rect x="${x-10}" y="148" width="20" height="62" rx="10" fill="${sh}"/>`;
+    return`<g class="arm arm${side}" style="transform-origin:${x}px 158px">${sleeve}${props}<circle cx="${x}" cy="214" r="10" fill="${sk}" stroke="${skl}" stroke-width="1.6"/></g>`;
   };
   const glasses=L.glasses?`<g><rect x="65" y="88" width="27" height="23" rx="9" fill="#fff" fill-opacity=".22" stroke="#2a2630" stroke-width="3.5"/><rect x="108" y="88" width="27" height="23" rx="9" fill="#fff" fill-opacity=".22" stroke="#2a2630" stroke-width="3.5"/><path d="M92 97L108 97" stroke="#2a2630" stroke-width="3.5"/></g>`:'';
   const mus=L.mus?`<path d="M86 113Q100 106 114 113Q100 118 86 113Z" fill="#3a3a3f"/>`:'';
@@ -783,7 +835,7 @@ function charSVG(L,ex='smile',vb='0 0 200 300'){
     <ellipse cx="84" cy="286" rx="15" ry="7" fill="#2a2630"/><ellipse cx="116" cy="286" rx="15" ry="7" fill="#2a2630"/>
     <g class="upper">
       ${behind?`<g class="headBack">${back}</g>`:''}
-      <rect x="91" y="132" width="18" height="22" fill="${shade(sk,-.08)}"/>
+      <rect x="91" y="132" width="18" height="22" fill="${sk}"/><rect x="91" y="140" width="18" height="5" fill="${shade(sk,-.1)}" opacity=".6"/>
       <path d="${torso}" fill="${sh}"/>${det}
       <g class="head">${behind?'':back}${ears?`<circle cx="40" cy="100" r="10" fill="${sk}"/><circle cx="160" cy="100" r="10" fill="${sk}"/>`:''}
         <ellipse cx="100" cy="${fcy}" rx="${frx}" ry="${fry}" fill="${sk}"/>
@@ -1037,7 +1089,7 @@ const WHO={
   jule:{name:'Bu Jule',role:'SSL',color:'#E5322D',av:1,voice:540},
   nura:{name:'Nura',role:'SCG',color:'#1E5BC6',av:1,voice:720},
   ken:{name:'Ken',role:'SCB',color:'#F08A00',av:1,voice:430},
-  andi:{name:'Pak Andi',role:'Area Supervisor',color:'#24365E',av:1,voice:320},
+  andi:{name:'Pak Abdul',role:'Area Supervisor',color:'#24365E',av:1,voice:320},
   ibu:{name:'Ibu',role:'Konsumen',color:'#D9577A',av:1,voice:650},
   anak:{name:'Adik',color:'#F28C28',av:1,voice:900},
   me:{name:()=>S.name+' (Kamu)',color:'#13A37F',voice:620},
@@ -1115,7 +1167,7 @@ function choose(title,opts,o={}){
     if(o.top!=null)wrap.style.top=o.top+'px';
     wrap.querySelector('.cTitle').animate([{opacity:0,transform:'translateY(-20px)'},{opacity:1,transform:'none'}],{duration:500,easing:EASE_SMOOTH});
     opts.forEach((op,i)=>{
-      const b=h('button','choice'+(op.used?' used':''),`<span class="cL">${op.icon||String.fromCharCode(65+i)}</span><span class="cT">${fmt(op.text)}</span>`,wrap);
+      const b=h('button','choice'+(op.used?' used':'')+(op.cls?' '+op.cls:''),`<span class="cL">${op.icon||String.fromCharCode(65+i)}</span><span class="cT">${fmt(op.text)}</span>`,wrap);
       b.animate([{opacity:0,transform:'translateY(50px) scale(.94)'},{opacity:1,transform:'none'}],{duration:520,delay:180+i*120,easing:EASE_SPRING,fill:'backwards'});
       b.addEventListener('click',async()=>{
         SFX.pop();
@@ -1284,7 +1336,7 @@ class Grill{
     this.add(i,0);SFX.drop();this.onPlace&&this.onPlace();return true;
   }
   add(i,t,silent){
-    const el=h('div','sosis raw',`<i class="marks"></i><b class="badge"><span></span></b>`,this.bed);
+    const el=h('div','sosis raw',`<b class="badge"><span></span></b>`,this.bed);
     const p=this.pos(i);el.style.left=p.x+'px';el.style.top=p.y+'px';
     const s={i,t,el,st:silent?'init':'raw',gone:false,drag:false};
     this.slots[i]=s;
@@ -1293,7 +1345,7 @@ class Grill{
       can:()=>!s.gone&&!this.frozen&&(s.st==='cooked'||s.st==='burning'),
       deny:()=>{if(!s.gone&&s.st==='raw'){floatTextAt(el,'Belum matang!','#E5322D');el.animate(shakeKF,{duration:320});}},
       payload:()=>({type:'cooked',s,grill:this}),
-      ghost:()=>{const g=h('div','sosis ghostS','<i class="marks"></i>');g.style.background=el.style.background;g.style.setProperty('--m',el.style.getPropertyValue('--m'));return g;},
+      ghost:()=>{const g=h('div','sosis ghostS','');g.style.background=el.style.background;g.style.setProperty('--m',el.style.getPropertyValue('--m'));return g;},
       onPick:()=>{s.drag=true;el.classList.add('lifted');},
       onCancel:()=>{s.drag=false;el.classList.remove('lifted');},
       onTap:()=>{this.onTapCooked&&this.onTapCooked(s);}
@@ -1345,7 +1397,7 @@ function buildTray(grill){
   Drag.source(box,{
     can:()=>!grill.frozen,
     payload:()=>({type:'raw'}),
-    ghost:()=>{const g=h('div','sosis ghostS','<i class="marks"></i>');g.style.background=sosisBG(C_RAW);return g;},
+    ghost:()=>{const g=h('div','sosis ghostS','');g.style.background=sosisBG(C_RAW);return g;},
     onTap:()=>{grill.placeRaw();}
   });
   t.box=box;return t;
@@ -1421,7 +1473,7 @@ function startScreen(){
     const s=h('div','start','',uiEl);
     s.innerHTML=`<div class="sTitle"><img class="sLogo" src="${LOGO}" alt="Yummy Choice">
       <h1>SOSIS BAKAR</h1><p>Target harus tercapai.<br>Tapi... gimana caranya?</p></div>
-      <div class="sCard"><label for="nm">Halo! Siapa nama panggilanmu?</label><div class="hint">Hari ini kamu bertugas sebagai kasir di toko.</div>
+      <div class="sCard"><label for="nm">Halo! Siapa nama panggilanmu?</label><div class="hint">Kamu bertugas sebagai kasir di toko.</div>
       <input id="nm" maxlength="16" autocomplete="off" placeholder="Tulis namamu di sini..." enterkeyhint="go">
       <button class="btn" id="goBtn" disabled>Mulai Shift ▶</button>
       <div class="snd">🎧 Nyalakan suara biar makin seru</div></div>`;
@@ -1494,7 +1546,7 @@ async function scene1(){
   grill.frozen=true;
   await wake();
   setHud(true);
-  await say('nura','Pagi, {name}! Hari ini **sosis bakar Yummy Choice** lagi jadi fokus toko. Bantu jualan, ya!',{pos:BUB.off});
+  await say('nura','Pagi, {name}! Yuk, bantu penjualan **sosis bakar Yummy Choice** yang jadi fokus toko!',{pos:BUB.off});
   await tutorial();
   await countdown();
   hudTimer(true);
@@ -1518,7 +1570,7 @@ async function scene1(){
     const c=waiting();
     if(!c){toast('Belum ada konsumen yang nunggu');return;}
     s.drag=true;const a=rectStage(s.el),b=rectStage(c.el);
-    const g=h('div','sosis ghostS','<i class="marks"></i>',dragLayer);g.style.background=s.el.style.background;g.style.setProperty('--m',.6);s.el.classList.add('lifted');
+    const g=h('div','sosis ghostS','',dragLayer);g.style.background=s.el.style.background;g.style.setProperty('--m',.6);s.el.classList.add('lifted');
     await g.animate([{left:(a.x+a.w/2)+'px',top:(a.y+a.h/2)+'px',transform:'translate(-50%,-50%) scale(1)'},{left:(b.x+b.w/2)+'px',top:(b.y+150)+'px',transform:'translate(-50%,-50%) scale(.3)'}],{duration:380,easing:EASE_SMOOTH,fill:'forwards'}).finished;
     g.remove();
     if(c.need()){grill.take(s);c.serve();}else{s.drag=false;s.el.classList.remove('lifted');}
@@ -1576,7 +1628,7 @@ async function interrupt(){
    ========================================================= */
 async function phoneNotif(){
   SFX.notif();
-  const p=h('div','phoneCard',`<div class="pc-top"><span class="dot"></span>Pesan baru · 14.47</div><div class="pc-msg"><span class="av">${avatar('andi')}</span><div><b>Pak Andi</b><small>Area Supervisor</small><p>Sore, Bu Jule. Nanti tolong update pencapaian sosis bakar hari ini ya. Makasih 🙏</p></div></div><div class="pc-tap">Ketuk untuk lanjut</div>`,uiEl);
+  const p=h('div','phoneCard',`<div class="pc-top"><span class="dot"></span>Pesan baru · 14.47</div><div class="pc-msg"><span class="av">${avatar('andi')}</span><div><b>Pak Abdul</b><small>Area Supervisor</small><p>Sore, Bu Jule. Nanti tolong update pencapaian sosis bakarnya ya. Makasih 🙏</p></div></div><div class="pc-tap">Ketuk untuk lanjut</div>`,uiEl);
   p.animate([{transform:'translateY(-120%) rotate(-6deg)'},{transform:'translateY(4%) rotate(1deg)',offset:.7},{transform:'none'}],{duration:650,easing:EASE_SMOOTH});
   await sleep(500);
   await waitTap(()=>true);SFX.tap();
@@ -1589,12 +1641,12 @@ async function scene2(){
   const J=addChar('jule','left',{ex:'panic',pose:'phone'});
   await J.enter();
   await say('jule','{name}! Target sosis kita kok masih **jauh banget** gini, ya?!');
-  await say('jule',`Baru **${S.target} dari ${S.goal}**. Hari ini sosis lagi jadi fokus, pencapaiannya harus saya update terus...`,{ex:'worried'});
+  await say('jule',`Baru **${S.target} dari ${S.goal}**. Sosis bakar ini kan lagi jadi fokus toko, pencapaiannya harus saya update terus...`,{ex:'worried'});
   await phoneNotif();
   await say('jule','Tuh kan, udah ditanyain...',{ex:'nervous'});
   const N=addChar('nura','right',{ex:'worried'});
   await N.enter();
-  await say('nura','Bu, hari ini **sekolah libur**. Biasanya jam segini anak-anak pulang sekolah pada mampir beli sosis.',{ex:'sad'});
+  await say('nura','Bu, sekolah lagi **libur**. Biasanya jam segini anak-anak pulang sekolah pada mampir beli sosis.',{ex:'sad'});
   await say('nura','Dari tadi kita udah nawarin terus kok, Bu. Cuma emang konsumennya **nggak sebanyak biasanya**.');
   await say('jule','Aduh... mana udah mau sore lagi!',{ex:'panic',pose:'panic'});
   J.pose(null);J.ex('think');
@@ -1652,8 +1704,8 @@ async function decision(){
     S.saved=S.target;
     AudioSys.setMood('tense');vig('tense');
     const c=await choose('Bu Jule menunggu jawabanmu...<small>Apa yang kamu lakukan, {name}?</small>'.replace('{name}',esc(S.name)),[
-      {icon:'💸',text:'**Terima.** Proses pembelian Bu Jule, biar target aman.'},
-      {icon:'✋',text:'**Tolak dengan sopan.** Ajak Bu Jule cek kondisinya dulu.'}
+      {icon:'💸',cls:'glowW',text:'**Terima.** Proses pembelian Bu Jule, biar target aman.'},
+      {icon:'✋',cls:'glowR',text:'**Tolak dengan sopan.** Ajak Bu Jule cek kondisinya dulu.'}
     ],{cls:'intense',top:230,backdrop:false});
     vig('dark');
     if(c===0){
@@ -1696,7 +1748,7 @@ async function pathAccept(){
   await sleep(700);
   SFX.success();confetti(50);
   await caption('🎯 TARGET TERCAPAI!',1500);
-  await say('jule','Yesss! Aman! Langsung saya laporin ke Pak Andi, ah.',{ex:'happy',pose:'bag'});
+  await say('jule','Yesss! Aman! Langsung saya laporin ke Pak Abdul, ah.',{ex:'happy',pose:'bag'});
   AudioSys.setMood('silence');
   await sleep(500);
   SFX.chime();
@@ -1707,10 +1759,10 @@ async function pathAccept(){
   await A.walkIn(1);
   await say('andi','Sore, Bu Jule. Kebetulan saya lagi lewat. Wah, sosisnya udah tercapai, ya? Mantap!',{ex:'happy'});
   A.c.ex('think');await sleep(700);
-  await say('andi','Lho... sosis sekantong penuh itu buat siapa, Bu?',{ex:'shock'});
-  await say('jule','E-eh, Pak Andi... i-ini... anu...',{ex:'panic',pose:'bag'});
+  await say('andi','Lho... sosis sekantong penuh itu buat siapa, Bu?',{ex:'shock',pose:'cross'});
+  await say('jule','E-eh, Pak Abdul... i-ini... anu...',{ex:'panic',pose:'bag'});
   SFX.sting();
-  await say('andi','Jadi pencapaian sosis hari ini... **yang beli tim sendiri?**',{ex:'stern',pose:'point'});
+  await say('andi','Jadi pencapaian sosisnya... **yang beli tim sendiri?**',{ex:'stern',pose:'cross'});
 }
 function failCard(){
   return new Promise(async res=>{
@@ -1752,23 +1804,63 @@ async function pathRefuse(){
 }
 function brakeForm(){
   return new Promise(res=>{
-    const Q=[
-      ['Apa yang sebenarnya terjadi?','Fakta apa yang terjadi di toko?'],
-      ['Apa yang harus dikejar (dan dijaga)?','Apa yang dikejar & dijaga?'],
-      ['Langkah apa yang harus dilakukan?','Ide apa yang bisa dicoba?']
+    const QS=[
+      {q:'Apa yang sebenarnya terjadi?',ok:'c1'},
+      {q:'Apa yang harus dikejar (dan dijaga)?',ok:'c2'},
+      {q:'Langkah apa yang harus dilakukan?',ok:'c3'}
     ];
-    const p=panel(`<div class="fTop"><div class="stopSign">REM</div><div><h2>Rem Dulu, ${esc(S.name)}!</h2><p>Sebelum ambil keputusan, cek 3 hal ini. Tulis singkat pakai bahasamu sendiri.</p></div></div>
-      <div class="facts"><span>Yang kamu tahu sejauh ini:</span><i>📅 Sekolah libur</i><i>🛒 Toko lebih sepi</i><i>🗣️ Tim sudah menawarkan</i><i>⏰ Sudah mau sore</i></div>
-      ${Q.map((q,i)=>`<div class="q" data-i="${i}"><b>${i+1}</b><div><h3>${q[0]}</h3><textarea maxlength="280" placeholder="${q[1]}"></textarea><div class="cnt">min. 10 karakter</div></div></div>`).join('')}
-      <button class="btn green" disabled>Sampaikan ke Bu Jule</button>`,'form');
-    const tas=[...p.querySelectorAll('textarea')],btn=p.querySelector('.btn');
-    const chk=()=>{let all=true;tas.forEach((t,i)=>{const ok=t.value.trim().length>=10;const q=t.closest('.q');if(ok&&!q.classList.contains('ok')){q.querySelector('b').animate([{transform:'scale(1)'},{transform:'scale(1.3)'},{transform:'scale(1)'}],{duration:350});SFX.pop();}q.classList.toggle('ok',ok);q.querySelector('b').textContent=ok?'✓':i+1;q.querySelector('.cnt').textContent=ok?'Sip!':`${t.value.trim().length}/10 karakter`;if(!ok)all=false;});btn.disabled=!all;};
-    tas.forEach(t=>t.addEventListener('input',chk));
+    const CARDS=[
+      {id:'c1',t:'Sekolah libur, jadi toko lebih sepi dari biasanya',why:'Kartu ini menjelaskan apa yang terjadi di toko. Coba pindahkan.'},
+      {id:'c2',t:'Target tetap dikejar, tapi dengan cara yang jujur',why:'Kartu ini tentang apa yang dikejar dan dijaga. Coba pindahkan.'},
+      {id:'c3',t:'Cari ide jualan baru bareng tim',why:'Kartu ini tentang langkah yang bisa dilakukan. Coba pindahkan.'}
+    ].sort(()=>Math.random()-.5);
+    const p=panel(`<div class="fTop"><div class="stopSign">REM</div><div><h2>Rem Dulu, ${esc(S.name)}!</h2><p>Seret tiap kartu ke pertanyaan yang cocok.</p></div></div>
+      <div class="facts"><i>📅 Sekolah libur</i><i>🛒 Toko lebih sepi</i><i>🗣️ Tim sudah menawarkan</i></div>
+      <div class="slots">${QS.map((q,i)=>`<div class="sq" data-i="${i}"><div class="slotQ"><b>${i+1}</b><span>${q.q}</span></div><div class="slot" data-i="${i}"></div><div class="why"></div></div>`).join('')}</div>
+      <div class="pool"></div>
+      <button class="btn green" disabled>Sampaikan ke Bu Jule</button>`,'form dnd');
+    const pool=p.querySelector('.pool'),btn=p.querySelector('.btn'),slots=[...p.querySelectorAll('.slot')];
+    const cardEl={},done=[false,false,false];
+    const firstEmpty=()=>slots.find((sl,i)=>!done[i]&&!sl.querySelector('.dcard'));
+    const check=()=>{btn.disabled=!done.every(Boolean);if(!btn.disabled){btn.animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:420});}};
+    const backToPool=el=>{pool.appendChild(el);el.animate([{transform:'scale(.85)',opacity:.4},{transform:'scale(1.04)',opacity:1,offset:.7},{transform:'none'}],{duration:360,easing:'ease-out'});};
+    const place=(id,sl)=>{
+      const i=+sl.dataset.i;if(done[i])return false;
+      const el=cardEl[id];
+      const old=sl.querySelector('.dcard');if(old&&old!==el)backToPool(old);
+      sl.appendChild(el);
+      const q=QS[i],why=sl.parentNode.querySelector('.why');
+      if(id===q.ok){
+        done[i]=true;el.classList.add('lock');sl.classList.add('ok');sl.parentNode.classList.add('ok');why.textContent='';
+        sl.parentNode.querySelector('.slotQ b').textContent='✓';
+        SFX.success();sl.animate([{transform:'scale(1)'},{transform:'scale(1.04)'},{transform:'scale(1)'}],{duration:360});
+        check();
+      }else{
+        SFX.bad();sl.classList.add('bad');why.textContent=(CARDS.find(c=>c.id===id)||{}).why||'Belum pas, coba pertanyaan lain.';
+        sl.animate(shakeKF,{duration:380});
+        setTimeout(()=>{sl.classList.remove('bad');if(el.parentNode===sl)backToPool(el);},750);
+        clearTimeout(why._t);why._t=setTimeout(()=>{why.textContent='';},3200);
+      }
+      return true;
+    };
+    CARDS.forEach(c=>{
+      const el=h('div','dcard',`<i>⠿</i><span>${esc(c.t)}</span>`,pool);el.dataset.id=c.id;cardEl[c.id]=el;
+      Drag.source(el,{
+        can:()=>!el.classList.contains('lock'),
+        payload:()=>({type:'card',id:c.id}),
+        ghost:()=>{const g=h('div','dcard ghostCard',el.innerHTML);return g;},
+        onPick:()=>el.classList.add('lifted'),
+        onCancel:()=>el.classList.remove('lifted'),
+        onTap:()=>{SFX.tap();if(el.parentNode===pool){const sl=firstEmpty();if(sl)place(c.id,sl);}else backToPool(el);}
+      });
+    });
+    const zones=slots.map(sl=>Drag.addZone(sl,{pad:14,accept:pp=>pp.type==='card',drop:pp=>{cardEl[pp.id].classList.remove('lifted');return place(pp.id,sl);}}));
+    zones.push(Drag.addZone(pool,{pad:6,accept:pp=>pp.type==='card',drop:pp=>{const el=cardEl[pp.id];el.classList.remove('lifted');if(el.parentNode!==pool)backToPool(el);return true;}}));
     btn.onclick=async()=>{
-      S.answers=tas.map(t=>t.value.trim());
-      document.activeElement&&document.activeElement.blur();
+      S.answers=QS.map(q=>CARDS.find(c=>c.id===q.ok).t);
+      Drag.zones=Drag.zones.filter(z=>!zones.includes(z));
       SFX.success();
-      await closePanel(p);fit(true);res();
+      await closePanel(p);res();
     };
   });
 }
@@ -1785,7 +1877,7 @@ async function scene5(){
   b.animate([{opacity:1},{opacity:0,transform:'translateY(-30px)'}],{duration:400,fill:'forwards'}).onfinish=()=>b.remove();
   await say('jule','...Bener juga kamu, {name}. Tadi saya malah **nggak kepikiran** ke situ.',{ex:'sweatSmile',pose:'scratch'});
   await say('jule','Yang saya bilang beli sendiri tadi, **lupain aja ya**. Nggak usah dilakuin. Sori, sori... itu cara yang nggak bener.');
-  await say('jule','Sore nanti kita cek bareng. Kalau belum tercapai, saya **lapor apa adanya** ke Pak Andi, sekalian minta arahan.',{ex:'smile',pose:null});
+  await say('jule','Sore nanti kita cek bareng. Kalau belum tercapai, saya **lapor apa adanya** ke Pak Abdul, sekalian minta arahan.',{ex:'smile',pose:null});
   await say('jule','Ayo, kita cari caranya bareng-bareng!',{ex:'determined',pose:'cheer'});
   await J.leave('left');
 }
@@ -1828,53 +1920,62 @@ async function scene7(){
     grill=new Grill({hold:true});
     for(let i=0;i<4;i++)grill.add(i,99999,true);
     grill.frozen=true;grill.updSizzle();
-    I=new Cust(LOOKS.ibu,'cMid',{key:'ibu',want:1,ex:'smile'});
-    A=new Cust(LOOKS.anak,'kid',{key:'anak',want:0,ex:'smile'});
+    I=new Cust(LOOKS.ibu,'cMid',{key:'ibu',want:0,ex:'smile'});
+    A=new Cust(LOOKS.anak,'kid',{key:'anak',want:1,ex:'spark'});
     A.el.style.zIndex=2;A.order.style.top='-46px';A.order.style.right='-30px';
   });
+  grill.onTapCooked=s=>{const t=A.need()?A:I.need()?I:null;if(t){grill.take(s);t.serve();}};
   await Promise.all([I.walkIn(-1),sleep(250).then(()=>A.walkIn(-1))]);
-  await say('ibu','Kak, sosis bakar **Yummy Choice**-nya satu, ya.');
+  await say('ibu','Kak, sosis bakar **Yummy Choice**-nya satu, ya. Buat si Adik.');
+  await say('anak','Yang gede ya, Kak!',{ex:'spark',pose:'reach'});
+  A.c.pose(null);
+
+  /* 1) sosis untuk si Adik */
   grill.frozen=false;grill.updSizzle();
-  instruct('Seret sosis matang ke Ibu','1');
-  let stop=hint(grill.firstCooked()&&grill.firstCooked().el,I.el,{to:'Kasih ke Ibu',item:'cooked',toY:270});
-  grill.onTapCooked=s=>{const t=I.need()?I:A.need()?A:null;if(t){grill.take(s);t.serve();}};
-  let stockI=keepStock(grill,()=>I.need());
-  await Promise.race([I.done(),until(()=>I.got>=I.want)]);stockI();stop();instruct(null);grill.frozen=true;grill.updSizzle();
-  I.c.pose('hold');
-  await say('ibu','Makasih, Kak.',{ex:'happy'});
-  A.c.ex('spark');A.c.pose('reach');A.c.hop();
-  await sleep(500);floatTextAt(A.el,'👀','#2B2D42');
-  await sleep(700);
-  SFX.idea();
-  const opts=[
-    {icon:'A',text:'"Sama-sama, Bu. Ini struknya, ya."'},
-    {icon:'B',text:'"Bu, sekalian buat **adiknya**? Lagi libur sekolah, pas buat camilan di rumah!"'},
-    {icon:'C',text:'"Bu, beli lima sekalian ya, kami lagi **kejar target** nih."'}
-  ];
-  const nudges=['Hmm... coba lihat deh, adiknya dari tadi ngelirik sosis terus 👀','Eits, jangan maksa konsumen. Nanti malah nggak nyaman.'];
-  let ok=false;
-  while(!ok){
-    const c=await choose('💡 Ide muncul!<small>Adiknya ngelirik sosis terus... kamu bilang apa?</small>',opts,{top:180});
-    if(c===1){ok=true;break;}
-    const n=c===0?nudges[0]:nudges[1];
-    opts[c].used=true;
-    await say('nura',n,{pos:BUB.off});
-  }
-  await say('me','Bu, sekalian buat **adiknya**? Lagi libur sekolah, pas buat camilan di rumah!');
-  await say('anak','Mamaaa, aku mau! **Aku mau sosis!**',{ex:'spark',pose:'reach'});
-  await say('ibu','Hahaha, ya udah deh. Tambah **dua**, ya. Satu buat kakaknya di rumah.',{ex:'happy'});
-  A.want=2;A.showOrder();
-  grill.frozen=false;grill.updSizzle();
-  instruct('Seret 2 sosis ke si Adik','2×');
-  stop=hint(grill.firstCooked()&&grill.firstCooked().el,A.el,{to:'Kasih ke Adik',item:'cooked',toY:165});
-  const sv=A.serve.bind(A);A.serve=()=>{stop&&stop();stop=null;sv();};
+  instruct('Seret sosis matang ke si Adik','1');
+  let stop=hint(grill.firstCooked()&&grill.firstCooked().el,A.el,{to:'Kasih ke Adik',item:'cooked',toY:165});
+  const sa=A.serve.bind(A);A.serve=()=>{stop&&stop();stop=null;sa();};
   const stockA=keepStock(grill,()=>A.need());
   await Promise.race([A.done(),until(()=>A.got>=A.want)]);stockA();stop&&stop();stop=null;instruct(null);
-  A.c.pose('hold');A.c.ex('happy');
-  SFX.cash();confetti(30);
-  await say('anak','Yeay! Makasih, Kak!');
-  await Promise.all([I.leave('walkL'),sleep(150).then(()=>A.leave('walkL'))]);
   grill.frozen=true;grill.updSizzle();
+  A.c.pose('hold');A.c.ex('happy');
+  await say('anak','Asyik! Makasih, Kak!',{ex:'happy'});
+
+  /* 2) ngobrol soal si Kakak */
+  await say('me','Tumben, Bu, biasanya anaknya berdua. **Si Kakak** nggak diajak?');
+  await say('ibu','Iya nih, Kak. Si Kakak lagi **ngerjain tugas** di rumah.',{ex:'smile'});
+  SFX.idea();
+  const opts=[
+    {icon:'A',text:'"Oh gitu, Bu. Ini struknya, ya. Terima kasih!"'},
+    {icon:'B',text:'"Wah, rajin Kakaknya! Sekalian **bawain sosis buat si Kakak**, Bu? Biar makin semangat ngerjain tugasnya."'},
+    {icon:'C',text:'"Bu, beli lima sekalian ya, kami lagi **kejar target** nih."'}
+  ];
+  const nudges=['Hmm... Ibu tadi cerita soal si Kakak, lho. Ada yang bisa kamu tawarkan?','Eits, jangan maksa konsumen. Nanti malah nggak nyaman.'];
+  let ok=false;
+  while(!ok){
+    const c=await choose('💡 Ide muncul!<small>Si Kakak lagi ngerjain tugas di rumah... kamu bilang apa?</small>',opts,{top:180});
+    if(c===1){ok=true;break;}
+    opts[c].used=true;
+    await say('nura',c===0?nudges[0]:nudges[1],{pos:BUB.off});
+  }
+  await say('me','Wah, rajin Kakaknya! Sekalian **bawain sosis buat si Kakak**, Bu? Biar makin semangat ngerjain tugasnya.');
+  await say('anak','Iya, Ma! Buat Kakak juga!',{ex:'spark'});
+  await say('ibu','Hahaha, boleh deh. **Satu lagi** ya, Kak, buat si Kakak.',{ex:'happy'});
+
+  /* 3) sosis untuk si Kakak, diserahkan ke Ibu */
+  I.want=1;I.showOrder();
+  grill.frozen=false;grill.updSizzle();
+  instruct('Seret 1 sosis ke Ibu, buat si Kakak','1');
+  stop=hint(grill.firstCooked()&&grill.firstCooked().el,I.el,{to:'Kasih ke Ibu',item:'cooked',toY:270});
+  const si=I.serve.bind(I);I.serve=()=>{stop&&stop();stop=null;si();};
+  const stockI=keepStock(grill,()=>I.need());
+  await Promise.race([I.done(),until(()=>I.got>=I.want)]);stockI();stop&&stop();stop=null;instruct(null);
+  grill.frozen=true;grill.updSizzle();
+  I.c.pose('hold');
+  SFX.cash();confetti(30);
+  await say('ibu','Makasih, Kak. Si Kakak pasti seneng!',{ex:'happy'});
+  await say('anak','Dadah, Kak!',{ex:'happy',pose:'wave'});
+  await Promise.all([I.leave('walkL'),sleep(150).then(()=>A.leave('walkL'))]);
 }
 
 /* =========================================================
@@ -1893,7 +1994,7 @@ async function scene8(){
   if(jAdd)addTarget(jAdd,J.el);
   const N=addChar('nura','right',{ex:'happy',pose:'wave'});await N.enter();
   await sleep(500);
-  await say('think','Semoga hari ini tercapai. Kalaupun belum, setidaknya **laporannya jujur**, dan nggak ada yang dikorbankan.');
+  await say('think','Semoga targetnya tercapai. Kalaupun belum, setidaknya **laporannya jujur**, dan nggak ada yang dikorbankan.');
 }
 
 /* =========================================================
@@ -1913,7 +2014,7 @@ async function scene9(){
     <h2>Terima kasih, ${esc(S.name)}!</h2>
     <div class="big">Target memang harus dikejar. Tapi <span class="hl">cara kita mengejarnya</span> adalah bagian dari kepemimpinan.</div>
     <div class="three"><div><b>1</b>Apa yang sebenarnya terjadi?</div><div><b>2</b>Apa yang harus dikejar & dijaga?</div><div><b>3</b>Langkah apa yang paling masuk akal?</div></div>
-    <p class="closing">Tim mungkin lupa angka pencapaian hari ini. Tapi mereka akan selalu ingat bagaimana kamu memperlakukan mereka saat mengejarnya.</p>
+    <p class="closing">Tim mungkin lupa angka pencapaiannya. Tapi mereka akan selalu ingat bagaimana kamu memperlakukan mereka saat mengejarnya.</p>
     <button class="linkBtn" id="noteBtn">Lihat catatanmu tadi</button>
     <div class="notes">${['Apa yang sebenarnya terjadi?','Apa yang harus dikejar?','Langkah apa yang harus dilakukan?'].map((q,i)=>`<div><b>${q}</b>${esc(S.answers[i]||'-')}</div>`).join('')}</div>
     <div class="teaser"><b>MISI BERIKUTNYA ▶</b>Tekanan nggak cuma datang dari target. Kadang datang saat anggota tim bikin salah, pas kita lagi capek dan buru-buru. Terus, sebagai leader harus gimana?</div>
