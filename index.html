@@ -736,7 +736,7 @@ const LOOKS={
   anak:{skin:'#FAD9BD',hair:'pig',hc:'#2b201d',shirt:'#FFB547',pants:'#5b8bd6'}
 };
 const CUST_SHIRTS=['#F28FA0','#7FC8A9','#F6B352','#8E9CF0','#E07A5F','#81B29A','#B388EB','#5BC0EB','#FF8C69'];
-const CUST_HAIR=['short','bob','long','cap','hijab','short','bob'];
+const CUST_HAIR=['short','bob','long','hijab','short','bob'];
 const SKINS=['#F9D3B4','#F1C6A0','#E8B48E','#F6D2B2','#DDA67E'];
 function randomLook(){const hair=pick(CUST_HAIR);return{skin:pick(SKINS),hair,hc:hair==='hijab'?pick(['#C7A4E8','#F4B6C2','#9ED2E8','#F7D488','#2b2a33']):hair==='cap'?pick(['#E5322D','#2463C8','#2B2D42','#22B573']):pick(['#2b201d','#3b2a22','#1f1c22','#5a3a28']),shirt:pick(CUST_SHIRTS),sleeve:Math.random()<.5?'long':'short'};}
 function shade(hex,amt){const n=parseInt(hex.replace('#',''),16);let r=n>>16,g=n>>8&255,b=n&255;const f=amt<0?0:255,p=Math.abs(amt);r=Math.round((f-r)*p+r);g=Math.round((f-g)*p+g);b=Math.round((f-b)*p+b);return`rgb(${r},${g},${b})`;}
@@ -787,7 +787,7 @@ function charSVG(L,ex='smile',vb='0 0 200 300'){
   let back='',front='',ears=true,frx=62,fry=58,fcy=94;
   switch(L.hair){
     case'long':back=`<path d="M38 98Q32 26 100 24Q168 26 162 98L168 206Q134 218 100 214Q66 218 32 206Z" fill="${hc}"/>`;front=`<path d="M37 104Q33 30 100 27Q167 30 163 104Q156 66 106 50L100 42L94 50Q44 66 37 104Z" fill="${hc}"/>`;break;
-    case'jule':back=`<path d="M33 104Q27 24 100 22Q173 24 167 104L166 128Q160 142 146 134L142 118L58 118L54 134Q40 142 34 128Z" fill="${hc}"/>`;front=`<path d="M37 106Q30 26 106 25Q170 28 164 100Q160 70 138 56Q116 72 84 70Q60 72 50 86Q42 96 37 106Z" fill="${hc}"/><path d="M138 56Q150 70 158 94" stroke="${shade(hc,.18)}" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="132" y="52" width="20" height="8" rx="3" fill="#FFC928" transform="rotate(32 142 56)"/>`;break;
+    case'jule':back=`<path d="M33 104Q27 24 100 22Q173 24 167 104L166 128Q160 142 146 134L142 118L58 118L54 134Q40 142 34 128Z" fill="${hc}"/>`;front=`<path d="M37 106Q30 26 106 25Q170 28 164 100Q160 70 138 56Q116 72 84 70Q60 72 50 86Q42 96 37 106Z" fill="${hc}"/><path d="M138 56Q150 70 158 94" stroke="${shade(hc,.18)}" stroke-width="3" fill="none" stroke-linecap="round"/>`;break;
     case'spiky':front=`<path d="M38 96Q34 40 66 32L70 16L86 27L97 10L110 26L127 14L131 32Q166 42 162 96Q156 62 132 58Q104 68 72 56Q48 66 38 96Z" fill="${hc}"/>`;break;
     case'neat':front=`<path d="M39 92Q38 32 100 30Q162 32 161 92Q154 58 120 54Q112 50 104 54L84 56Q50 60 39 92Z" fill="${hc}"/><path d="M104 36Q108 46 104 54" stroke="${shade('#4a4a50',.3)}" stroke-width="3" fill="none"/>`;break;
     case'short':front=`<path d="M40 88Q38 30 100 30Q162 30 160 88Q150 56 126 54Q116 64 96 60Q62 56 40 88Z" fill="${hc}"/>`;break;
